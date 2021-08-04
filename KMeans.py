@@ -1,21 +1,53 @@
+"""
+1. 定义距离计算公式
+2. 随机初始化中心点
+3. 迭代划分簇, 更新质点
+"""
+
 # 定义距离计算公式
-def euclDistance(vector1, vector2):
-    return np.sqrt(sum((vector2 - vector1) ** 2))
+def euclDist(vecA, vecB):
+    return np.sqrt(sum(power(vecA-vecB, 2)))
 
-# 初始化质心
-def initCentroids(data, k):
-    numSamples, dim = data.shape
-    # k个质心，列数跟样本的列数一样
-    centroids = np.zeros((k, dim))
-    # 随机选出k个质心
+# 随机初始化中心点
+def initCentroids(dataSet, k):
+    m, n = dataSet.shape
+    centroids = np.zeros((k,n))
     for i in range(k):
-        # 随机选取一个样本的索引
-        index = int(np.random.uniform(0, numSamples))
-        # 作为初始化的质心
-        centroids[i, :] = data[index, :]
+        index = int(np.random.uniform(0,m))
+        centroids[i:] = dataSet[index:]
     return centroids
-    
 
+def KMeans(dataSet, k):
+    # 迭代划分簇, 更新质点
+    # while True
+    clusterSet = np.array(np.zeros((dataSet,shape[0],2)))
+    # 初始化中心点
+    centroids = initCentroids(dataSet, k)
+    clusterChange = True 
+    while clusterChange:
+        clusterChange = False
+        for i in range(dataSet.shape[0]):
+            minDist = float("INF")
+            minInd = -1
+            for j in range(k):
+                # 计算距离
+                dist = euclDist(dataSet[i: ], centroids[j: ])
+                if dist < minDist:
+                    minDist = dist
+                    minInd = j
+                    clusterSet[i, 1] = minDist
+            if clusterSet[i, 0] != minInd:
+                clusterChange = True
+                clusterSet[i, 0] = minInd
+                
+        # 更新中心点
+        for i in range(k):
+            cluster = dataSet[np.nonzero(clusterSet[: 0] == i)]
+            cetroids[i: ] = np.mean(cluster, axis=0)
+    return centroids, clusterSet
+
+----------------------------------------------------
+### 网上参考
 # 传入数据集和k值
 def kmeans(data, k):
     # 计算样本个数
@@ -31,7 +63,7 @@ def kmeans(data, k):
         # 循环每一个样本
         for i in range(numSamples):
             # 最小距离
-            minDist = float("INF")
+            minDist = 100000.0
             # 定义样本所属的簇
             minIndex = 0
             # 循环计算每一个质心与该样本的距离
